@@ -1,0 +1,10 @@
+- module-name: 'pydivert'
+  data-files:
+    dirs:
+      - 'windivert_dll'
+  dlls:
+    - from_filenames:
+        relative_path: 'windivert_dll'
+        prefixes:
+          - 'WinDivert32'
+          - 'WinDivert64'
