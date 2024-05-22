@@ -1,8 +1,9 @@
 import json
 import os
 import re
+from json import JSONDecodeError
 from waitress import serve
-from flask import Flask
+from flask import Flask, Response
 from flask import request
 from loguru import logger
 
@@ -15,7 +16,11 @@ def uploadHistory():
     hex_bytes = request.data
 
     jsonString = getJsonStringFromBinaryRequest(hex_bytes)
-    data = json.loads(jsonString)
+
+    try:
+        data = json.loads(jsonString)
+    except JSONDecodeError:
+        return Response("{'error': 'unprocessable entity'}", status=422, mimetype='application/json')
 
     listAttributes = ['spectrumList', 'maxSpectrumList', 'originalSpectrum', 'wlSpectrum']
     for listAttribute in listAttributes:
@@ -116,8 +121,3 @@ def modifyLoginMessage():
     binary = request.data
     logger.debug(len(binary))
     return '成功'  # Успех
-
-
-if __name__ == '__main__':
-    serve(serverApp, host='192.168.137.1', port=80)
-    # serverApp.run(host='192.168.137.1', port=80, debug=True)

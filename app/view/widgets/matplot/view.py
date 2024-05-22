@@ -14,6 +14,7 @@ from matplotlib.lines import Line2D
 from matplotlib.offsetbox import DraggableAnnotation
 from matplotlib.text import Annotation
 from scipy.signal import find_peaks
+
 from app.model.measurement import Measurement
 from app.model.measurements_table import MeasurementsTable
 from app.view.modules.styles import MATPLOT_WIDGET_STYLESHEET

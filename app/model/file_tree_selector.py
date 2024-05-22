@@ -1,4 +1,3 @@
-
 import os
 from PySide6 import QtWidgets, QtCore, QtGui
 from loguru import logger

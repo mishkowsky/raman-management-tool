@@ -1,3 +1,5 @@
+import pytest
+
 from app.model.measurement import Measurement
 
 TEST_MEASUREMENTS = [
@@ -13,19 +15,12 @@ TEST_MEASUREMENTS = [
     '''{
         "createDate": "2024-02-11 15:21:28",
         "name": "test_2",
-        "spectrumList": [
-            2.0,
-            2.0,
-            2.0
-        ]
+        "spectrumList": "[2.0, 2.0, 2.0]"
     }''',
 ]
 
 
 class TestMeasurement:
-
-    # def testInit(self):
-    #     m = Measurement()
 
     def testLoadFromFile(self, tmp_path_factory):
         tmp_file_path = tmp_path_factory.getbasetemp().joinpath(f"test_1.txt")
@@ -34,6 +29,13 @@ class TestMeasurement:
         m.loadFromFile(str(tmp_file_path))
         assert m.loadedFromFilePath == str(tmp_file_path)
         assert m.spectrumList == [1.0, 1.0, 1.0]
+
+        tmp_file_path = tmp_path_factory.getbasetemp().joinpath(f"test_2.txt")
+        tmp_file_path.write_text(TEST_MEASUREMENTS[1])
+        m = Measurement()
+        m.loadFromFile(str(tmp_file_path))
+        assert m.loadedFromFilePath == str(tmp_file_path)
+        assert m.spectrumList == [2.0, 2.0, 2.0]
 
     def testSave(self, tmp_path_factory):
         testSpectrum = [0, 1]
@@ -47,10 +49,12 @@ class TestMeasurement:
         m1.loadFromFile(tmp_file_path)
         assert m1.spectrumList == testSpectrum
 
-    # def testJsonSerialize(self):
-    #     m = Measurement()
-    #     m.spectrumList = [1, 2, 3]
-    #     jsonDictionary = m.jsonSerialize()
+    def testJsonSerializeRaise(self):
+        class TestClass:
+            pass
+
+        with pytest.raises(TypeError):
+            Measurement.jsonSerialize(Measurement(), TestClass)
 
     def testNormalizeAndSave(self, tmp_path_factory):
         tmp_file_path = str(tmp_path_factory.getbasetemp().joinpath(f"normalized.txt"))
@@ -72,3 +76,12 @@ class TestMeasurement:
         average = Measurement()
         average.loadFromFile(tmp_file_path)
         assert average.spectrumList == [1, 1, 1]
+
+    def testEq(self):
+        m1 = Measurement()
+        m1.loadedFromFilePath = 'somePath'
+        m2 = Measurement()
+        m2.loadedFromFilePath = m1.loadedFromFilePath
+
+        assert m1 == m2
+        assert m1 != []

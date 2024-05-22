@@ -1,4 +1,3 @@
-
 class ZoomFactory:
     def __init__(self, minX, maxX, minY=-1, maxY=float('inf')):
         self.maxX = maxX
@@ -36,4 +35,3 @@ class ZoomFactory:
         fig.canvas.mpl_connect('scroll_event', zoom)
 
         return zoom
-

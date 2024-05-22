@@ -3,7 +3,6 @@ import struct
 import subprocess
 import time
 from threading import Thread
-
 import elevate
 import pydivert
 from loguru import logger

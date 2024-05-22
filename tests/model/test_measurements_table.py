@@ -19,6 +19,11 @@ class TestMeasurementsTable:
         measurementTitleIndex = table.index(0, 2)
         assert table.data(measurementTitleIndex, Qt.ItemDataRole.DisplayRole) == 'TEST'
 
+        table.defaultState = Qt.CheckState.PartiallyChecked
+        table.addNewMeasurement(Measurement(), color)
+        measurementStateIndex = table.index(1, 0)
+        assert table.data(measurementStateIndex, Qt.ItemDataRole.CheckStateRole) == Qt.CheckState.Unchecked
+
     def testRemoveSelectedMeasurements(self):
         m1 = Measurement()
         m1.name = '1'
@@ -81,9 +86,18 @@ class TestMeasurementsTable:
         checkState = table.data(checkStateIndex, Qt.ItemDataRole.CheckStateRole)
         assert checkState == Qt.CheckState.Checked
 
+        checkStateAlignment = table.data(checkStateIndex, Qt.ItemDataRole.TextAlignmentRole)
+        assert checkStateAlignment == Qt.AlignmentFlag.AlignCenter
+
+        checkStateDisplay = table.data(checkStateIndex, Qt.ItemDataRole.DisplayRole)
+        assert checkStateDisplay == Qt.CheckState.Checked
+
         colorIndex = table.index(0, 1)
         colorData = table.data(colorIndex, Qt.ItemDataRole.BackgroundRole)
         assert color == colorData
+
+        colorDisplay = table.data(colorIndex, Qt.ItemDataRole.DisplayRole)
+        assert colorDisplay is None
 
         nameIndex = table.index(0, 2)
         nameData = table.data(nameIndex, Qt.ItemDataRole.DisplayRole)
@@ -97,6 +111,9 @@ class TestMeasurementsTable:
         pathData = table.data(pathIndex, Qt.ItemDataRole.DisplayRole)
         assert m.loadedFromFilePath == pathData
 
+        userRole = table.data(pathIndex, Qt.ItemDataRole.UserRole)
+        assert userRole is None
+
     def testFlags(self):
 
         table = MeasurementsTable()
@@ -105,6 +122,10 @@ class TestMeasurementsTable:
         firstColumnIndex = table.index(0, 0)
         firstColumnFlags = table.flags(firstColumnIndex)
         assert firstColumnFlags & Qt.ItemFlag.ItemIsUserCheckable
+
+        secondColumnIndex = table.index(0, 1)
+        secondColumnFlags = table.flags(secondColumnIndex)
+        assert secondColumnFlags & Qt.ItemFlag.ItemIsEnabled
 
     def testSetData(self):
         table = MeasurementsTable()
@@ -118,6 +139,8 @@ class TestMeasurementsTable:
 
         state = table.checkStates[0]
         assert state == Qt.CheckState.Unchecked
+
+        assert not table.setData(firstColumnIndex, Qt.ItemDataRole.UserRole)
 
     def testGetSelectedMeasurements(self):
         m1 = Measurement()
@@ -164,6 +187,8 @@ class TestMeasurementsTable:
         m2.loadedFromFilePath = '2'
 
         table = MeasurementsTable()
+        assert table.getTotalState() == Qt.CheckState.Checked
+
         table.addNewMeasurement(m1, QBrush(Qt.GlobalColor.black))
         table.addNewMeasurement(m2, QBrush(Qt.GlobalColor.white))
 

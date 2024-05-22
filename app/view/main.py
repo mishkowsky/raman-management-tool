@@ -7,12 +7,13 @@ import threading
 from json import JSONDecodeError
 from pathlib import Path
 import elevate
+from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import QMainWindow, QFileDialog, QColorDialog, QMessageBox, QApplication
 from waitress import serve
-import app.view.modules.resources_rc
-from PySide6 import QtCore, QtGui, QtWidgets
 from loguru import logger
+
+import app.view.modules.resources_rc
 from app.config import THREAD_LOGGER_FORMAT, SERVER_ADDRESS
 from app.model.measurements_table import MeasurementsTable
 from app.network import server
@@ -30,7 +31,6 @@ from app.view.widgets.matplot.view import MatplotLayout
 
 
 os.environ["QT_FONT_DPI"] = "96"  # FIX Problem for High DPI and Scale above 100%
-
 CONFIG_FILENAME = 'config'
 
 
@@ -308,7 +308,6 @@ class MainWindow(QMainWindow):
         if not dataPathDir.exists():
             dataPathDir.mkpath('.')
         if not os.path.isfile(f'{dataPath}/{CONFIG_FILENAME}'):
-            # self.changeBackupFolderButtonHandler()
             self.changeUploadFolderButtonHandler()
         with open(f'{dataPath}/{CONFIG_FILENAME}', 'r') as file:
             jsonString = file.read()

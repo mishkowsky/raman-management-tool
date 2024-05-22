@@ -1,5 +1,4 @@
 import os
-
 from PySide6 import QtCore, QtWidgets, QtGui
 from PySide6.QtCore import QRect, QAbstractItemModel, QSortFilterProxyModel
 from PySide6.QtGui import Qt, QColor, QPalette, QMouseEvent
@@ -91,7 +90,6 @@ class TableView(QTableView):
 
     def __init__(self, parent, model: MeasurementsTable):
         super().__init__(parent=parent)
-        # self.setModel(model)
         proxy = RenderTypeProxyModel(model, self)
         self.setModel(proxy)
         self.tableModel = model
@@ -111,8 +109,6 @@ class TableView(QTableView):
         self.setSizeAdjustPolicy(QHeaderView.SizeAdjustPolicy.AdjustToContents)
         delegate = Delegate(self)
         self.setItemDelegate(delegate)
-        # delegate = DateDelegate(tableView)
-        # tableView.setItemDelegateForColumn(3, delegate)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         palette = QPalette()
         palette.setColor(QPalette.ColorRole.HighlightedText, QColor(221, 221, 221))

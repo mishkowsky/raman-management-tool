@@ -1,4 +1,3 @@
-
 from PySide6 import QtCore
 from PySide6.QtCore import QAbstractTableModel
 from PySide6.QtGui import Qt, QBrush
@@ -30,7 +29,6 @@ class MeasurementsTable(QAbstractTableModel):
         self.endInsertRows()
 
     def removeSelectedMeasurements(self):
-        # self.beginRemoveRows(QtCore.QModelIndex(), 0, len(self.measurements) - 1)
         rowsToRemove = []
         i = -1
         for checkState in self.checkStates:
@@ -46,7 +44,6 @@ class MeasurementsTable(QAbstractTableModel):
             del self.colors[row]
             self.dataChanged.emit(self.index(row, 0), self.index(row, 4))
             self.endRemoveRows()
-        # self.dataChanged.emit(self.index(0, 0), self.index(self.rowCount(), 4))
 
     def changeSelectedLinesColor(self, color: QBrush):
         for rowIndex in range(0, self.rowCount()):
@@ -77,7 +74,6 @@ class MeasurementsTable(QAbstractTableModel):
                 return measurement.name
             elif column == 3:
                 return measurement.createDate
-                # return measurement.createDate.strftime(Measurement.UI_DATETIME_FORMAT)
             elif column == 4:
                 return measurement.loadedFromFilePath
         if role == QtCore.Qt.ItemDataRole.CheckStateRole and index.column() == 0:

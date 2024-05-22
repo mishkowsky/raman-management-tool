@@ -5,6 +5,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QPalette, QColor
 from PySide6.QtWidgets import QFileDialog, QTreeView
 from loguru import logger
+
 from app.model.file_tree_selector import FileTreeSelectorModel
 from app.view.modules.styles import MAIN_STYLE
 

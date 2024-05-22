@@ -139,13 +139,3 @@ class Measurement:
 
     def __hash__(self):
         return hash(self.loadedFromFilePath)
-
-
-if __name__ == '__main__':
-    # for name in os.listdir('C:/Users/aleks/PycharmProjects/raman-gui/measurements'):
-    #     m = Measurement()
-    #     if name == 'normalized':
-    #         continue
-    #     m.loadFromFile('C:/Users/aleks/PycharmProjects/raman-gui/measurements/' + name)
-    #     m.normalize()
-    pass
