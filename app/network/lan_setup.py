@@ -9,8 +9,6 @@ import elevate
 from icmplib import ping
 from loguru import logger
 
-from app.network.firewall import runFirewallThreads
-
 
 def getHotspotScript(value: int):
     """
@@ -65,16 +63,8 @@ SetHotspot({value})
 """
 
 
-class FirewallThreadException(Exception):
-    pass
-
-
-def setupLANInfrastructure(firewallStates):
+def setupLANInfrastructure():
     startHotspot()
-    try:
-        runFirewallThreads(firewallStates)
-    except Exception:
-        raise FirewallThreadException
     sleep(0.25)
     checkSetup()
 
@@ -89,14 +79,14 @@ def startHotspot():
         getHotspotScript(1)], startupinfo=startupinfo).wait()
 
 
-def wlanDisconnect():
+def stopHotspot():
     startupinfo = subprocess.STARTUPINFO()
     startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
     subprocess.Popen([
         "powershell.exe",
         "-NoProfile",
         "-ExecutionPolicy", "Bypass",
-        "netsh wlan disconnect"], startupinfo=startupinfo).wait()
+        getHotspotScript(0)], startupinfo=startupinfo)
 
 
 def resolveNameWithTimeout(nameToResolve, timeout=1) -> str | None:
@@ -165,13 +155,3 @@ def addLineToHostsFile():
                    '\n192.168.137.1 api.lqoptics.com'
                    '\n# End of section\n')
         file.flush()
-
-
-def stopHotspot():
-    startupinfo = subprocess.STARTUPINFO()
-    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-    subprocess.Popen([
-        "powershell.exe",
-        "-NoProfile",
-        "-ExecutionPolicy", "Bypass",
-        getHotspotScript(0)], startupinfo=startupinfo)

@@ -7,21 +7,23 @@ import threading
 from json import JSONDecodeError
 from pathlib import Path
 import elevate
-from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import QMainWindow, QFileDialog, QColorDialog, QMessageBox, QApplication
 from waitress import serve
-from loguru import logger
 
 import app.view.modules.resources_rc
+from PySide6 import QtCore, QtGui, QtWidgets
+from loguru import logger
+
 from app.config import THREAD_LOGGER_FORMAT, SERVER_ADDRESS
+from app.firewall.firewall import runFirewallThreads
 from app.model.measurements_table import MeasurementsTable
-from app.network import server
-from app.network.firewall import Firewall, HotspotInterfaceIndexNotFoundException
-from app.network.lan_setup import stopHotspot, setupLANInfrastructure, FirewallThreadException
+from app.server import server
+from app.firewall.firewall import Firewall, HotspotInterfaceIndexNotFoundException
+from app.network.lan_setup import stopHotspot, setupLANInfrastructure
 from app.view.modules import UiMainWindow, Settings, UIFunctions
 from app.view.modules.styles import MAIN_STYLE, MATPLOT_WIDGET_STYLESHEET
-from app.network.server import serverApp
+from app.server.server import serverApp
 from app.model.measurement import Measurement
 from app.model.file_tree_selector import FileTreeSelectorModel
 from app.view.widgets.dialogs.firewall_exception import FirewallExceptionDialog
@@ -298,6 +300,8 @@ class MainWindow(QMainWindow):
             self.fileSystemModel.setData(index, newState, QtCore.Qt.ItemDataRole.CheckStateRole)
 
     def close(self):
+        stopHotspot()
+        self.firewall.close()
         super().close()
 
     def runServer(self):
@@ -321,7 +325,7 @@ class MainWindow(QMainWindow):
 
         server.uploadFolder = path
 
-        thread = threading.Thread(target=serve, kwargs={'serverApp': serverApp, 'port': 80, 'host': SERVER_ADDRESS})
+        thread = threading.Thread(target=serve, kwargs={'app': serverApp, 'port': 80, 'host': SERVER_ADDRESS})
         thread.daemon = True
         thread.start()
 
@@ -331,10 +335,16 @@ if __name__ == '__main__':
     app = QApplication()
     logger.remove()
     logger.add(sys.stdout, format=THREAD_LOGGER_FORMAT)
+    setupLANInfrastructure()
+
     firewall_ = Firewall()
     try:
-        setupLANInfrastructure(firewall_)
-    except FirewallThreadException:
+        runFirewallThreads(firewall_)
+    except HotspotInterfaceIndexNotFoundException:
+        w = HotspotExceptionDialog()
+        w.show()
+        sys.exit(app.exec())
+    except Exception:
         w = FirewallExceptionDialog()
         dialogCode = w.exec()
         if not dialogCode:
@@ -343,10 +353,6 @@ if __name__ == '__main__':
         stopHotspot()
         SERVER_ADDRESS = '192.168.1.111'
         window = MainWindow(firewall_)
-        sys.exit(app.exec())
-    except HotspotInterfaceIndexNotFoundException:
-        w = HotspotExceptionDialog()
-        w.show()
         sys.exit(app.exec())
     window = MainWindow(firewall_)
     sys.exit(app.exec())

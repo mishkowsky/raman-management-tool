@@ -1,9 +1,7 @@
 import os
-
 import pytest
-
-from app.network import server
-from app.network.server import serverApp, getJsonStringFromBinaryRequest
+from app.server import server
+from app.server.server import serverApp, getJsonStringFromBinaryRequest
 
 
 @pytest.fixture()
@@ -87,6 +85,9 @@ def testUploadHistory(tmp_path_factory, client):
         "success": True}
     assert response.json == expectedJsonObject
     assert os.path.exists(tmp_path_factory.getbasetemp().joinpath('No match.txt'))
+
+    response = client.post('/UpLoadFileService.svc/web/CreateUploadHistory', data=data)
+    assert os.path.exists(tmp_path_factory.getbasetemp().joinpath('No match (1).txt'))
 
     data = b'{"name": "", "title": ""}'
     response = client.post('/UpLoadFileService.svc/web/CreateUploadHistory', data=data)
