@@ -16,7 +16,7 @@ class AnnotationsFactory:
     PEAK_THRESHOLD = 5
     PRECISION_TO_PRINT = 2
     Y_OFFSET = 20
-    X_OFFSET = 10
+    X_OFFSET = 7
     NEXT_ANNOTATION_OFFSET = 50
 
     class MeasurementsProperties:
