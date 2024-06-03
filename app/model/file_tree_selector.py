@@ -9,15 +9,12 @@ class FileTreeSelectorModel(QtWidgets.QFileSystemModel):
         self.root_path = rootpath
         self.checkBoxStatuses: dict[str, QtCore.Qt.CheckState] = {}
         self.parent_index = self.setRootPath(self.root_path)
-        self.removeColumn(1)
         self.removeColumn(2)
-        self.removeColumn(3)
+        self.removeColumn(1)
         self.dataChanged.emit(self, self)
-        # self.setFilter(QtCore.QDir.Filter.AllEntries | QtCore.QDir.Filter.Hidden |
-        #                QtCore.QDir.Filter.NoDot | QtCore.QDir.Filter.NoDotDot)
 
     def data(self, index, role=QtCore.Qt.ItemDataRole):
-        if role == QtCore.Qt.ItemDataRole.DecorationRole:
+        if role == QtCore.Qt.ItemDataRole.DecorationRole and index.column() == 0:
             if os.path.isfile(self.filePath(index)):
                 return QtGui.QIcon(':/icons/images/icons/cil-file.png')
             else:
@@ -51,7 +48,7 @@ class FileTreeSelectorModel(QtWidgets.QFileSystemModel):
             if index.parent().isValid():
                 self.updateParentsCheckStates(index)
             return True
-        return QtWidgets.QFileSystemModel.setData(self, index, value, role)
+        return super().setData(index, value, role)
 
     def updateChildrenCheckStates(self, index, value):
         path = self.filePath(index)
@@ -96,3 +93,7 @@ class FileTreeSelectorModel(QtWidgets.QFileSystemModel):
 
     def getCheckedFilesPaths(self):
         return [k for k, v in self.checkBoxStatuses.items() if v == QtCore.Qt.CheckState.Checked and os.path.isfile(k)]
+
+    def setRootPath(self, path: str) -> QtCore.QModelIndex:
+        self.checkBoxStatuses = {}
+        return super().setRootPath(path)

@@ -570,7 +570,12 @@ QCommandLinkButton:pressed {
 #pagesContainer QPushButton:pressed {
     background-color: rgb(35, 40, 49);
     border: 2px solid rgb(43, 50, 61);
-}"""
+}
+QTabBar::tab {
+    background-color: rgb(33, 37, 43);
+}
+QTabWidget::pane { border-color: rgb(44, 49, 60); }
+"""
 
 MATPLOT_WIDGET_STYLESHEET = """
 /* Tool Button */

@@ -29,12 +29,22 @@ class CustomToolbar(NavigationToolbar):
 
     def __init__(self, canvas_, parent_):
 
+        requiredTools = ['Brush', 'Delete', 'Customize', 'Home', 'Back', 'Forward', 'Pan', 'Zoom']
+
         index = self.toolitems.index(('Save', 'Save the figure', 'filesave', 'save_figure'))
         self.toolitems.insert(index, ('Brush', 'Choose color for selected lines', 'brush', 'brush_lines'))
         self.toolitems.insert(index, ('Resize', 'Resize vertical axes', 'resize', 'resize_y_axes'))
         self.toolitems.append(('Delete', 'Remove selected lines from plot', 'delete', 'remove_lines'))
         self.toolitems.remove((None, None, None, None))  # remove empty separators
         self.toolitems.remove((None, None, None, None))  # remove empty separators
+
+        toolsToRemove = []
+        for text, tooltip_text, image_file, callback in self.toolitems:
+            if text is not None and text not in requiredTools:
+                toolsToRemove.append((text, tooltip_text, image_file, callback))
+        for tool in toolsToRemove:
+            self.toolitems.remove(tool)
+
         NavigationToolbar.__init__(self, canvas_, parent_, False)
         icons_buttons = {
             'Home': QtGui.QIcon(':/icons/images/icons/cil-home.png'),
@@ -59,8 +69,6 @@ class CustomToolbar(NavigationToolbar):
         self.checkboxPeaks.stateChanged.connect(canvas_.setOnlyPeaks)
         self.checkboxTightLayout.setChecked(canvas_.tightLayout)
         self.checkboxTightLayout.stateChanged.connect(canvas_.setTightLayout)
-        self.addSeparator()
-        self.addWidget(self.checkboxTightLayout)
         self.addSeparator()
         self.addWidget(self.checkboxPeaks)
 
@@ -99,6 +107,7 @@ class MatplotCanvas(FigureCanvasQTAgg):
     onlyPeaks = False
 
     def __init__(self, parent=None, width=5, height=4, dpi=100, measurementsTableModel: MeasurementsTable = None):
+        import app.view.widgets.matplot.figure_options
         self.measurementsTable = measurementsTableModel
         self.addedLines: dict[Measurement, Line2D] = {}
 
@@ -118,10 +127,12 @@ class MatplotCanvas(FigureCanvasQTAgg):
         self.axes.spines['left'].set_color('#DDDDDD')
         self.axes.tick_params(axis='x', colors='#DDDDDD', which='both')
         self.axes.tick_params(axis='y', colors='#DDDDDD')
+        self.axes.xaxis.label.set_color('#DDDDDD')
+        self.axes.yaxis.label.set_color('#DDDDDD')
 
-        ZoomFactory(minX, maxX).zoom_factory(self.axes)
         self.annotationsFactory = AnnotationsFactory(self.axes, measurementsTableModel)
         self.annotationsFactory.setup()
+        ZoomFactory(minX, maxX).zoom_factory(self.axes, self.annotationsFactory)
         PanFactory(minX, maxX, annotationFactory=self.annotationsFactory).pan_factory(self.axes)
 
         super(MatplotCanvas, self).__init__(self.fig)
@@ -158,6 +169,7 @@ class MatplotCanvas(FigureCanvasQTAgg):
         self.addedLines[measurement] = line
         self.fig.canvas.draw()
         self.annotationsFactory.addNewLine(measurement, line)
+        self.resizeVerticalAxes()
         return line
 
     def removeMeasurementLines(self, measurements: list[Measurement]):
@@ -170,6 +182,7 @@ class MatplotCanvas(FigureCanvasQTAgg):
         self.fig.canvas.draw()
         if not self.axes.lines or len(self.axes.lines) == 0:
             self.annotationsFactory.hideAnnotations()
+        self.resizeVerticalAxes()
 
     def changeSelectedLinesColor(self, color):
         selectedMeasurements = self.measurementsTable.getSelectedMeasurements()
@@ -189,7 +202,7 @@ class MatplotCanvas(FigureCanvasQTAgg):
         if maxY == -1:
             maxY = 1
         logger.debug(f'SETTING BOUNDS TO [{0 - 0.05 * maxY}; {maxY}]')
-        self.axes.set_ybound(lower=0 - 0.05 * maxY, upper=maxY * 1.05)
+        self.axes.set_ybound(lower=0 - 0.05 * maxY, upper=maxY * 1.25)
         self.fig.canvas.draw()
 
 

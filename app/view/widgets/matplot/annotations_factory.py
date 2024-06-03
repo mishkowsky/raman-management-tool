@@ -1,5 +1,5 @@
+import math
 import numpy as np
-from loguru import logger
 from matplotlib.axes import Axes
 from matplotlib.backend_bases import MouseButton
 from matplotlib.figure import Figure
@@ -15,6 +15,9 @@ from app.model.measurements_table import MeasurementsTable
 class AnnotationsFactory:
     PEAK_THRESHOLD = 5
     PRECISION_TO_PRINT = 2
+    Y_OFFSET = 20
+    X_OFFSET = 10
+    NEXT_ANNOTATION_OFFSET = 50
 
     class MeasurementsProperties:
         def __init__(self, line: Line2D, annotation: Annotation = None, pinnedAnnotations=None, ):
@@ -61,20 +64,28 @@ class AnnotationsFactory:
         del self.measurementsProperties[measurement]
 
     def updateSelectedLinesAnnotationsCoordinates(self, _):
-        logger.debug('UPDATING')
-        self.annotationXOffset = -20
         selectedMeasurements = self.measurementsTable.getSelectedMeasurements()
+        someAnnotation = self.measurementsProperties[selectedMeasurements[0]].annotation
+        scale = self.ax.get_xscale()
+        if scale == 'log':
+            position = math.log((someAnnotation.xy[0] / self.ax.get_xlim()[0]),
+                                (self.ax.get_xlim()[1] / self.ax.get_xlim()[0]))
+        else:
+            position = (someAnnotation.xy[0] - self.ax.get_xlim()[0]) / \
+                       (self.ax.get_xlim()[1] - self.ax.get_xlim()[0])
+        offset = -position * AnnotationsFactory.NEXT_ANNOTATION_OFFSET * len(selectedMeasurements)
+        offset += AnnotationsFactory.X_OFFSET
         for (measurement, measurementProperties) in self.measurementsProperties.items():
             annotation = measurementProperties.annotation
             if measurement in selectedMeasurements:
                 annotation.set_visible(True)
-                annotation.xyann = (self.annotationXOffset, 20)
-                self.annotationXOffset += 65
+                annotation.xyann = (offset, AnnotationsFactory.Y_OFFSET)
+                offset += AnnotationsFactory.NEXT_ANNOTATION_OFFSET
             else:
                 annotation.set_visible(False)
 
     def createAnnotationForLine(self, line, xtext) -> Annotation:
-        newAnnotation: Annotation = self.ax.annotate('', xy=(0, 0), xytext=(xtext, 20),
+        newAnnotation: Annotation = self.ax.annotate('', xy=(0, 0), xytext=(xtext, AnnotationsFactory.Y_OFFSET),
                                                      textcoords='offset points', bbox=dict(boxstyle='round', fc='w'),
                                                      arrowprops=dict(arrowstyle='-', color='#444444'))
         newAnnotation.get_bbox_patch().set_color(line.get_color())
@@ -116,6 +127,15 @@ class AnnotationsFactory:
             self.wasPressedWithNoMotion = False
             if event.inaxes == self.ax and not self.dragging:
                 selectedMeasurements = self.measurementsTable.getSelectedMeasurements()
+                scale = self.ax.get_xscale()
+                if scale == 'log':
+                    position = math.log((event.xdata / self.ax.get_xlim()[0]),
+                                        (self.ax.get_xlim()[1] / self.ax.get_xlim()[0]))
+                else:
+                    position = (event.xdata - self.ax.get_xlim()[0]) / \
+                               (self.ax.get_xlim()[1] - self.ax.get_xlim()[0])
+                offset = -position * AnnotationsFactory.NEXT_ANNOTATION_OFFSET * len(selectedMeasurements)
+                offset += AnnotationsFactory.X_OFFSET
                 for (measurement, measurementProperties) in self.measurementsProperties.items():
                     if measurement not in selectedMeasurements:
                         continue
@@ -133,8 +153,10 @@ class AnnotationsFactory:
                     update_annot(annotation, x_cord, y_cord)
                     if annotation.xy not in [annotation_.xy for annotation_ in measurementProperties.pinnedAnnotations]:
                         annotation.set_visible(True)
+                        annotation.xyann = (offset, 20)
                     else:
                         annotation.set_visible(False)
+                    offset += AnnotationsFactory.NEXT_ANNOTATION_OFFSET
                 self.drawAllArtistsExceptAxes()
             else:
                 self.hideAnnotations()

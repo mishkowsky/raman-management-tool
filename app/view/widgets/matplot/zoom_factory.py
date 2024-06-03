@@ -7,7 +7,7 @@ class ZoomFactory:
 
         self.cur_x_lim = None
 
-    def zoom_factory(self, ax, base_scale=1.35):
+    def zoom_factory(self, ax, annotationsFactory, base_scale=1.35):
         def zoom(event):
             cur_x_lim = ax.get_xlim()
             xdata = event.xdata
@@ -29,6 +29,7 @@ class ZoomFactory:
             newRightX = min(self.maxX, newRightX)
             newLeftX = max(self.minX, newLeftX)
             ax.set_xlim([newLeftX, newRightX])
+            annotationsFactory.updateSelectedLinesAnnotationsCoordinates(0)
             ax.figure.canvas.draw()
 
         fig = ax.get_figure()  # get the figure of interest

@@ -23,7 +23,6 @@ class FileSystemTreeView(QTreeView):
         self.setRootIndex(model.parent_index)
         self.setColumnHidden(1, True)
         self.setColumnHidden(2, True)
-        self.setColumnHidden(3, True)
         self.sortByColumn(0, QtCore.Qt.SortOrder.AscendingOrder)
 
     def setupPalette(self):
@@ -87,9 +86,8 @@ class FileTreeSelectorDialog(QtWidgets.QWidget):
 
         # Model
         self.model = FileTreeSelectorModel(rootpath=self.root_path)
-        self.model.removeColumn(1)
         self.model.removeColumn(2)
-        self.model.removeColumn(3)
+        self.model.removeColumn(1)
         self.model.dataChanged.emit(self.model, self.model)
 
         # View
