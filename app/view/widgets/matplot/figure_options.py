@@ -256,7 +256,7 @@ def figure_edit(axes, parent=None):
     if QtWidgets.QApplication.startingUp():
         _app = QtWidgets.QApplication([])
     dialog = FormDialog(datalist, title="Figure options", comment='comment',
-                        icon=QtGui.QIcon(str(cbook._get_data_path('images', 'qt4_editor_options.svg'))), parent=parent,
+                        icon=QtGui.QIcon(':/icons/images/icons/cil-chart-line-no-arrow.png'), parent=parent,
                         apply=apply_callback)
 
     if parent is not None:
@@ -264,15 +264,6 @@ def figure_edit(axes, parent=None):
             parent._fedit_dialog.close()
         parent._fedit_dialog = dialog
     dialog.setStyleSheet(MAIN_STYLE)
-    dialog.setStyleSheet("""
-    background-color: rgb(40, 44, 52);
-    color: rgb(221, 221, 221);
-    font: 10pt \ Segoe UI\ ;
-
-
-
-    """)
-
     dialog.show()
 
 

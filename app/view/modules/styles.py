@@ -463,7 +463,7 @@ QRadioButton::indicator:checked {
 
 /* ComboBox */
 QComboBox {
-    background-color: rgb(27, 29, 35);
+    background-color: rgb(33, 37, 43);
     border-radius: 5px;
     border: 2px solid rgb(33, 37, 43);
     padding: 5px;
@@ -490,6 +490,8 @@ QComboBox QAbstractItemView {
     background-color: rgb(33, 37, 43);
     padding: 10px;
     selection-background-color: rgb(39, 44, 54);
+    selection-color: (27, 29, 35);
+    selection-background-color: (27, 29, 35);
 }
 
 /* Sliders */
@@ -571,10 +573,65 @@ QCommandLinkButton:pressed {
     background-color: rgb(35, 40, 49);
     border: 2px solid rgb(43, 50, 61);
 }
+QTabWidget::pane { /* The tab widget frame */
+    border: 2px solid rgb(44, 49, 58);
+    background-color:  rgb(40, 44, 52);
+}
 QTabBar::tab {
     background-color: rgb(33, 37, 43);
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    padding: 5px;
 }
-QTabWidget::pane { border-color: rgb(44, 49, 60); }
+
+QTabBar::tab:!selected {
+    margin-top: 2px; /* make non-selected tabs look smaller */
+}
+
+FormDialog {
+    background-color: rgb(40, 44, 52);
+    color: rgb(221, 221, 221);
+    font: 10pt \ Segoe UI\ ;
+}
+
+FormDialog QPushButton {
+    border: 2px solid rgb(52, 59, 72);
+    border-radius: 5px;
+    background-color: rgb(52, 59, 72);
+    padding: 3px;
+}
+FormDialog QPushButton:hover {
+    background-color: rgb(57, 65, 80);
+    border: 2px solid rgb(61, 70, 86);
+}
+FormDialog QPushButton:pressed {
+    background-color: rgb(35, 40, 49);
+    border: 2px solid rgb(43, 50, 61);
+}
+
+QColorDialog {
+    background-color: rgb(40, 44, 52);
+    font: 10pt \ Segoe UI\ ;
+}
+
+QColorDialog QPushButton {
+    background-color: rgb(52, 59, 72);
+    border: 2px solid rgb(52, 59, 72);
+    border-radius: 5px;
+    padding: 3px;
+}
+QColorDialog QPushButton:hover {
+    background-color: rgb(52, 59, 72);
+    border: 2px solid rgb(61, 70, 86);
+}
+QColorDialog QPushButton:pressed {
+    background-color: rgb(52, 59, 72);
+    border: 2px solid rgb(43, 50, 61);
+}
+
+QColorDialog QSpinBox {
+    background-color: rgb(40, 44, 52);
+}
 """
 
 MATPLOT_WIDGET_STYLESHEET = """

@@ -292,6 +292,7 @@ class UiMainWindow(object):
         self.verticalLayout_222.setObjectName(u"verticalLayout_222")
         self.verticalLayout_222.setSizeConstraint(QLayout.SetMinimumSize)
         self.verticalLayout_222.setContentsMargins(0, 0, 0, 0)
+
         self.uploadFolderLabel = QLabel(self.verticalLayoutWidget_221)
         self.uploadFolderLabel.setObjectName(u"uploadFolderLabel")
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
@@ -319,7 +320,13 @@ class UiMainWindow(object):
         sizePolicy15.setVerticalStretch(0)
         sizePolicy15.setHeightForWidth(self.changeUploadFolderButton.sizePolicy().hasHeightForWidth())
         self.changeUploadFolderButton.setSizePolicy(sizePolicy15)
+        self.changeUploadFolderButton.setMinimumSize(QSize(150, 30))
+        self.changeUploadFolderButton.setFont(font)
         self.changeUploadFolderButton.setCursor(QCursor(Qt.PointingHandCursor))
+        self.changeUploadFolderButton.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        icon6 = QIcon()
+        icon6.addFile(u":/icons/images/icons/cil-folder.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.changeUploadFolderButton.setIcon(icon6)
 
         self.horizontalLayout_64.addWidget(self.changeUploadFolderButton)
 

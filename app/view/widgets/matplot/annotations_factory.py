@@ -65,6 +65,8 @@ class AnnotationsFactory:
 
     def updateSelectedLinesAnnotationsCoordinates(self, _):
         selectedMeasurements = self.measurementsTable.getSelectedMeasurements()
+        if len(selectedMeasurements) == 0:
+            return
         someAnnotation = self.measurementsProperties[selectedMeasurements[0]].annotation
         scale = self.ax.get_xscale()
         if scale == 'log':
