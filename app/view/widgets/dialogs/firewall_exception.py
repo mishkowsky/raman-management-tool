@@ -2,6 +2,8 @@ import sys
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QDialog, QPushButton, QApplication, QLabel, QVBoxLayout, QHBoxLayout, QWidget
 
+from app.view.modules.styles import MAIN_STYLE
+
 
 class FirewallExceptionDialog(QDialog):
     def __init__(self):
@@ -27,6 +29,7 @@ class FirewallExceptionDialog(QDialog):
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.verticalLayout.addWidget(self.label)
         self.verticalLayout.addWidget(self.buttons)
+        self.setStyleSheet("""background-color: rgb(40, 44, 53);""")
 
     def close(self):
         self.setResult(QDialog.DialogCode.Rejected)
@@ -41,6 +44,7 @@ class FirewallExceptionDialog(QDialog):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    app.setStyle('Fusion')
     w = FirewallExceptionDialog()
     dialogCode = w.exec()
     if not dialogCode:

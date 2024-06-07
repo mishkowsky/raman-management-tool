@@ -13,6 +13,7 @@ class HotspotExceptionDialog(QDialog):
 
         self.setWindowTitle('Hotspot exception')
         self.one = QPushButton('Ok', self.buttons)
+        self.one.setStyleSheet(u"background-color: rgb(52, 59, 72);")
         self.one.clicked.connect(self.buttonClicked)
 
         self.horizontalLayout.addWidget(self.one)
@@ -26,6 +27,7 @@ class HotspotExceptionDialog(QDialog):
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.verticalLayout.addWidget(self.label)
         self.verticalLayout.addWidget(self.buttons)
+        self.setStyleSheet("""background-color: rgb(40, 44, 53);""")
 
     def buttonClicked(self):
         self.done(1)
@@ -33,6 +35,7 @@ class HotspotExceptionDialog(QDialog):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    app.setStyle('Fusion')
     w = HotspotExceptionDialog()
     dialogCode = w.exec()
     print(dialogCode)
